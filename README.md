@@ -1,10 +1,20 @@
-# Dynamic Linear Visualizer
+# Constant Visualizer
 
-This visualizer uses the adjusted close prices for 3 companies over 20 years find the optimal parameter L in a dynamic linear strategy
+This visualizer shows the performance of a constant mix portfolio for 3 stocks over different periods.
 
 Companies: MSFT, GE, CISCO
 
-Time Range: 6/26/2000 - 6/25/2020 inclusive
+Time Ranges:
+
+6/26/2000 - 6/25/2020 inclusive 
+
+Highest return year for the sum of the three stocks
+
+Lowest return year
+
+Most volatile year
+
+Least volatile year
 
 # Assumptions
 
