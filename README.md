@@ -1,20 +1,10 @@
 # Constant Mix Visualizer
 
-This visualizer shows the performance of a constant mix portfolio for 3 stocks over different periods.
+This visualizer shows the performance of a constant mix portfolio for 3 stocks over the past 20 years and subset ranges. 
 
 Companies: MSFT, GE, CISCO
 
-Time Ranges:
-
-6/26/2000 - 6/25/2020 inclusive 
-
-Highest return year for the sum of the three stocks
-
-Lowest return year
-
-Most volatile year
-
-Least volatile year
+Time Range: 6/26/2000 - 6/25/2020 inclusive 
 
 # Assumptions
 
