@@ -1,4 +1,4 @@
-# Constant Visualizer
+# Constant Mix Visualizer
 
 This visualizer shows the performance of a constant mix portfolio for 3 stocks over different periods.
 
