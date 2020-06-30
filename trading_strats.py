@@ -16,7 +16,8 @@ class Portfolio:
 		drawdown = 100.*(self.peak - new_W)/self.peak
 		if drawdown > self.md:
 			self.md = drawdown
-		self.W.append(new_W/self.initW)
+		# stored wealths are scaled to % of initial wealth to allow for easier interpretation
+		self.W.append(new_W/self.initW*100.0)
 
 	def get_sharpe_ratio(self):
 		daily_return = np.diff(self.W)/self.W[:-1]
@@ -42,23 +43,24 @@ initial_wealth = 10**6
 cost_per_unit = 0.005
 num_stocks = len(prices)
 num_assets = num_stocks+1.
+pi = np.full(num_stocks, 1./num_assets)
 
+theta_n_prev = np.zeros(num_stocks)
+mm_balance = initial_wealth
 portfolio = Portfolio(initial_wealth)
 for i in range(N):
 	p_n = prices[:,i]
 	if i == 0:
-		theta_n_prev = initial_wealth/num_assets/p_n
-		transact_cost = np.sum(theta_n_prev)*cost_per_unit
-		mm_balance = initial_wealth - np.sum(theta_n_prev*p_n) - transact_cost
+		w_n_prev =  initial_wealth
 	else:
-		w_n =  np.sum(theta_n_prev*p_n)+mm_balance
-		theta_n = w_n/num_assets/p_n
-		transact_cost = np.sum(np.abs(theta_n_prev - theta_n))*cost_per_unit
-		theta_n_prev = theta_n
-		mm_balance = w_n - np.sum(theta_n_prev*p_n) - transact_cost
-	w_n_prev = mm_balance+np.sum(theta_n_prev*p_n)
-	portfolio.add_wealth(w_n_prev)
+		w_n_prev =  np.sum(theta_n_prev*p_n)+mm_balance
+	theta_n = w_n_prev*pi/p_n
+	transact_cost = np.sum(np.abs(theta_n_prev - theta_n))*cost_per_unit
+	w_shares = np.sum(theta_n*p_n)
+	mm_balance = w_n_prev-w_shares- transact_cost
 	portfolio.ttc += transact_cost
+	portfolio.add_wealth(mm_balance+w_shares)
+	theta_n_prev = theta_n
 portfolio.to_string()
 
 plt.plot(portfolio.W)
