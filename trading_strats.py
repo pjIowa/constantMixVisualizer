@@ -63,6 +63,44 @@ for i in range(N):
 	theta_n_prev = theta_n
 portfolio.to_string()
 
+highest_start_index = 0
+highest_percent_gain = 0.
+lowest_start_index = 0
+lowest__percent_gain = 100000.
+
+volatile_start_index = 0
+stable_start_index = 0
+highest_variance = 0.
+lowest_variance = 100000.
+
+for i in range(0, N-252):
+	portfolio_start = np.mean(prices[:,i], axis=0)
+	portfolio_end = np.mean(prices[:,i+251], axis=0) 
+	portfolio_percent_change = (portfolio_end - portfolio_start)/portfolio_start
+
+	if portfolio_percent_change > highest_percent_gain:
+		highest_start_index = i
+		highest_percent_gain = portfolio_percent_change
+	if portfolio_percent_change < lowest__percent_gain:
+		lowest_start_index = i
+		lowest__percent_gain = portfolio_percent_change
+
+	# print(prices[:,i:i+252].shape)
+	series_cov = np.cov(prices[:,i:i+252])
+	# print(series_cov.shape)
+	portfolio_variance = np.trace(series_cov)/9.+(np.sum(np.triu(series_cov))+np.sum(np.tril(series_cov)))*2./9.
+	if portfolio_variance > highest_variance:
+		highest_variance = portfolio_variance
+		volatile_start_index = i
+	if portfolio_variance < lowest_variance:
+		lowest_variance = portfolio_variance
+		stable_start_index = i
+
+print(lowest__percent_gain)
+print(highest_percent_gain)
+print(lowest_variance)
+print(highest_variance)
+
 plt.plot(portfolio.W)
 plt.xlabel('Days since 6-26-00')
 plt.ylabel('Wealth, $')
