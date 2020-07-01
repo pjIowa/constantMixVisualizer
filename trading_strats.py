@@ -2,13 +2,36 @@ import pandas as pd
 import numpy as np
 # from matplotlib import pyplot as plt
 
-class full_portfolio:
-	def __init__(self, initW):
+class portfolio:
+	def __init__(self, initW, num_stocks, cost_per_unit, prices, num_points):
 		self.W = []
 		self.ttc = 0.
 		self.peak = 0.
 		self.md = 0.
 		self.initW = initW
+		self.num_s = num_stocks
+		self.unit_c = cost_per_unit
+		self.prices = prices
+		self.N = num_points
+
+	def run(self):
+		num_assets = self.num_s+1
+		pi = np.full(self.num_s, 1./num_assets)
+		theta_n_prev = np.zeros(self.num_s)
+		mm_balance = self.initW
+		for i in range(self.N):
+			p_n = self.prices[:,i]
+			if i == 0:
+				w_n_prev =  self.initW
+			else:
+				w_n_prev =  np.sum(theta_n_prev*p_n)+mm_balance
+			theta_n = w_n_prev*pi/p_n
+			transact_cost = np.sum(np.abs(theta_n_prev - theta_n))*self.unit_c
+			w_shares = np.sum(theta_n*p_n)
+			mm_balance = w_n_prev-w_shares- transact_cost
+			self.ttc += transact_cost
+			self.add_wealth(mm_balance+w_shares)
+			theta_n_prev = theta_n
 
 	def add_wealth(self, new_W):
 		if new_W > self.peak:
@@ -42,25 +65,9 @@ N = len(prices[0])
 initial_wealth = 10**6
 cost_per_unit = 0.005
 num_stocks = len(prices)
-num_assets = num_stocks+1.
-pi = np.full(num_stocks, 1./num_assets)
 
-theta_n_prev = np.zeros(num_stocks)
-mm_balance = initial_wealth
-full_portfolio = full_portfolio(initial_wealth)
-for i in range(N):
-	p_n = prices[:,i]
-	if i == 0:
-		w_n_prev =  initial_wealth
-	else:
-		w_n_prev =  np.sum(theta_n_prev*p_n)+mm_balance
-	theta_n = w_n_prev*pi/p_n
-	transact_cost = np.sum(np.abs(theta_n_prev - theta_n))*cost_per_unit
-	w_shares = np.sum(theta_n*p_n)
-	mm_balance = w_n_prev-w_shares- transact_cost
-	full_portfolio.ttc += transact_cost
-	full_portfolio.add_wealth(mm_balance+w_shares)
-	theta_n_prev = theta_n
+full_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, prices, N)
+full_portfolio.run()
 full_portfolio.to_string()
 
 highest_start_index = 0
