@@ -1,8 +1,8 @@
 import pandas as pd
 import numpy as np
-from matplotlib import pyplot as plt
+# from matplotlib import pyplot as plt
 
-class Portfolio:
+class full_portfolio:
 	def __init__(self, initW):
 		self.W = []
 		self.ttc = 0.
@@ -47,7 +47,7 @@ pi = np.full(num_stocks, 1./num_assets)
 
 theta_n_prev = np.zeros(num_stocks)
 mm_balance = initial_wealth
-portfolio = Portfolio(initial_wealth)
+full_portfolio = full_portfolio(initial_wealth)
 for i in range(N):
 	p_n = prices[:,i]
 	if i == 0:
@@ -58,50 +58,43 @@ for i in range(N):
 	transact_cost = np.sum(np.abs(theta_n_prev - theta_n))*cost_per_unit
 	w_shares = np.sum(theta_n*p_n)
 	mm_balance = w_n_prev-w_shares- transact_cost
-	portfolio.ttc += transact_cost
-	portfolio.add_wealth(mm_balance+w_shares)
+	full_portfolio.ttc += transact_cost
+	full_portfolio.add_wealth(mm_balance+w_shares)
 	theta_n_prev = theta_n
-portfolio.to_string()
+full_portfolio.to_string()
 
 highest_start_index = 0
-highest_percent_gain = 0.
 lowest_start_index = 0
-lowest__percent_gain = 100000.
-
 volatile_start_index = 0
 stable_start_index = 0
+
+highest__percent_change = 0.
+lowest__percent_change = 100000.
 highest_variance = 0.
 lowest_variance = 100000.
 
 for i in range(0, N-252):
-	portfolio_start = np.mean(prices[:,i], axis=0)
-	portfolio_end = np.mean(prices[:,i+251], axis=0) 
-	portfolio_percent_change = (portfolio_end - portfolio_start)/portfolio_start
+	full_portfolio_start = np.mean(prices[:,i], axis=0)
+	full_portfolio_end = np.mean(prices[:,i+251], axis=0) 
+	full_portfolio_percent_change = (full_portfolio_end - full_portfolio_start)/full_portfolio_start
 
-	if portfolio_percent_change > highest_percent_gain:
+	if full_portfolio_percent_change > highest__percent_change:
 		highest_start_index = i
-		highest_percent_gain = portfolio_percent_change
-	if portfolio_percent_change < lowest__percent_gain:
+		highest__percent_change = full_portfolio_percent_change
+	if full_portfolio_percent_change < lowest__percent_change:
 		lowest_start_index = i
-		lowest__percent_gain = portfolio_percent_change
+		lowest__percent_change = full_portfolio_percent_change
 
-	# print(prices[:,i:i+252].shape)
-	series_cov = np.cov(prices[:,i:i+252])
-	# print(series_cov.shape)
-	portfolio_variance = np.trace(series_cov)/9.+(np.sum(np.triu(series_cov))+np.sum(np.tril(series_cov)))*2./9.
-	if portfolio_variance > highest_variance:
-		highest_variance = portfolio_variance
+	returns_cov = np.cov(np.diff(prices[:,i:i+252]))
+	full_portfolio_variance = (np.trace(returns_cov)+2.*np.sum(np.triu(returns_cov))+2.*np.sum(np.tril(returns_cov)))/9.
+	if full_portfolio_variance > highest_variance:
+		highest_variance = full_portfolio_variance
 		volatile_start_index = i
-	if portfolio_variance < lowest_variance:
-		lowest_variance = portfolio_variance
+	if full_portfolio_variance < lowest_variance:
+		lowest_variance = full_portfolio_variance
 		stable_start_index = i
 
-print(lowest__percent_gain)
-print(highest_percent_gain)
-print(lowest_variance)
-print(highest_variance)
-
-plt.plot(portfolio.W)
-plt.xlabel('Days since 6-26-00')
-plt.ylabel('Wealth, $')
-plt.show()
+# plt.plot(full_portfolio.W)
+# plt.xlabel('Days since 6-26-00')
+# plt.ylabel('Wealth, $')
+# plt.show()
