@@ -39,21 +39,28 @@ class portfolio:
 		drawdown = 100.*(self.peak - new_W)/self.peak
 		if drawdown > self.md:
 			self.md = drawdown
-		# stored wealths are scaled to % of initial wealth to allow for easier interpretation
-		self.W.append(new_W/self.initW*100.0)
+		self.W.append(new_W)
 
 	def get_sharpe_ratio(self):
-		daily_return = np.diff(self.W)/self.W[:-1]
+		daily_return = np.diff(self.W)/self.W[-1]
 		daily_mean = np.mean(daily_return)
 		N = 252
 		annual_mean = ((daily_mean+1.)**N)-1.
 		annnual_variance = ((np.var(daily_return)+(daily_mean+1.)**2)**N)-((daily_mean+1.)**(2*N))
 		return annual_mean/np.sqrt(annnual_variance)
 
+	def get_annualized_return(self):
+		daily_return = np.diff(self.W)/self.W[-1]
+		daily_mean = np.mean(daily_return)
+		N = 252
+		return ((daily_mean+1.)**N)-1.
+
 	def to_string(self):
-		print(f"Total transaction cost:\t{self.ttc}")
-		print(f"Max drawdown:\t\t{self.md}")
-		print(f"Sharpe ratio:\t\t{self.get_sharpe_ratio()}")
+		print(f"Annualized % gain:\t\t{self.get_annualized_return()*100.0}")
+		wealth_change = self.W[-1]-self.W[0]
+		print(f"Transactions as % of gain:\t{self.ttc/wealth_change*100.0}")
+		print(f"Max drawdown:\t\t\t{self.md}")
+		print(f"Sharpe ratio:\t\t\t{self.get_sharpe_ratio()}")
 
 # Adjusted close downloaded from June 25, 2000 to June 26, 2020 inclusive of 3 stocks using data from Yahoo Finance
 MSFT=pd.read_csv('MSFT.csv')["Adj Close"].to_numpy()
@@ -66,33 +73,36 @@ initial_wealth = 10**6
 cost_per_unit = 0.005
 num_stocks = len(prices)
 
+print("Full 20 years")
 full_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, prices, N)
 full_portfolio.run()
 full_portfolio.to_string()
+print()
 
 highest_start_index = 0
 lowest_start_index = 0
 volatile_start_index = 0
 stable_start_index = 0
 
-highest__percent_change = 0.
+highest_percent_change = 0.
 lowest__percent_change = 100000.
 highest_variance = 0.
 lowest_variance = 100000.
 
-for i in range(0, N-252):
+trading_days = 252
+for i in range(0, N-trading_days):
 	full_portfolio_start = np.mean(prices[:,i], axis=0)
-	full_portfolio_end = np.mean(prices[:,i+251], axis=0) 
+	full_portfolio_end = np.mean(prices[:,i+trading_days-1], axis=0) 
 	full_portfolio_percent_change = (full_portfolio_end - full_portfolio_start)/full_portfolio_start
 
-	if full_portfolio_percent_change > highest__percent_change:
+	if full_portfolio_percent_change > highest_percent_change:
 		highest_start_index = i
-		highest__percent_change = full_portfolio_percent_change
+		highest_percent_change = full_portfolio_percent_change
 	if full_portfolio_percent_change < lowest__percent_change:
 		lowest_start_index = i
 		lowest__percent_change = full_portfolio_percent_change
 
-	returns_cov = np.cov(np.diff(prices[:,i:i+252]))
+	returns_cov = np.cov(np.diff(prices[:,i:i+trading_days]))
 	full_portfolio_variance = (np.trace(returns_cov)+2.*np.sum(np.triu(returns_cov))+2.*np.sum(np.tril(returns_cov)))/9.
 	if full_portfolio_variance > highest_variance:
 		highest_variance = full_portfolio_variance
@@ -100,6 +110,34 @@ for i in range(0, N-252):
 	if full_portfolio_variance < lowest_variance:
 		lowest_variance = full_portfolio_variance
 		stable_start_index = i
+
+print("Most volatile year")
+volatile_prices_range = prices[:,volatile_start_index:volatile_start_index+trading_days]
+volatile_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, volatile_prices_range, trading_days)
+volatile_portfolio.run()
+volatile_portfolio.to_string()
+print()
+
+print("Least volatile year")
+stable_prices_range = prices[:,stable_start_index:stable_start_index+trading_days]
+stable_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, stable_prices_range, trading_days)
+stable_portfolio.run()
+stable_portfolio.to_string()
+print()
+
+print("Best year")
+highest_prices_range = prices[:,highest_start_index:highest_start_index+trading_days]
+highest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, highest_prices_range, trading_days)
+highest_portfolio.run()
+highest_portfolio.to_string()
+print()
+
+print("Worst year")
+lowest_prices_range = prices[:,lowest_start_index:lowest_start_index+trading_days]
+lowest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, lowest_prices_range, trading_days)
+lowest_portfolio.run()
+lowest_portfolio.to_string()
+print()
 
 # plt.plot(full_portfolio.W)
 # plt.xlabel('Days since 6-26-00')
