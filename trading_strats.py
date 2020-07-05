@@ -26,11 +26,11 @@ class portfolio:
 			else:
 				w_n_prev =  np.sum(theta_n_prev*p_n)+mm_balance
 			theta_n = w_n_prev*pi/p_n
-			transact_cost = np.sum(np.abs(theta_n_prev - theta_n))*self.unit_c
-			w_shares = np.sum(theta_n*p_n)
-			mm_balance = w_n_prev-w_shares- transact_cost
+			transact_cost = np.sum(np.abs(theta_n - theta_n_prev))*self.unit_c
+			w_n_shares = np.sum(theta_n*p_n)
+			mm_balance = w_n_prev-w_n_shares-transact_cost
 			self.ttc += transact_cost
-			self.add_wealth(mm_balance+w_shares)
+			self.add_wealth(mm_balance+w_n_shares)
 			theta_n_prev = theta_n
 
 	def add_wealth(self, new_W):
@@ -56,11 +56,10 @@ class portfolio:
 		return ((daily_mean+1.)**N)-1.
 
 	def to_string(self):
-		print(f"Annualized % gain:\t\t{self.get_annualized_return()*100.0}")
-		wealth_change = self.W[-1]-self.W[0]
-		print(f"Transactions as % of gain:\t{self.ttc/wealth_change*100.0}")
-		print(f"Max drawdown:\t\t\t{self.md}")
-		print(f"Sharpe ratio:\t\t\t{self.get_sharpe_ratio()}")
+		print(f"Annualized rate of return: {self.get_annualized_return()*100.0:.3f} %")
+		print(f"Expense ratio: {self.ttc/self.W[-1]*100.0:.3f} %")
+		print(f"Max drawdown: {self.md:.3f} %")
+		print(f"Sharpe ratio: {self.get_sharpe_ratio():.3f}")
 
 # Adjusted close downloaded from June 25, 2000 to June 26, 2020 inclusive of 3 stocks using data from Yahoo Finance
 MSFT=pd.read_csv('MSFT.csv')["Adj Close"].to_numpy()
@@ -73,7 +72,7 @@ initial_wealth = 10**6
 cost_per_unit = 0.005
 num_stocks = len(prices)
 
-print("Full 20 years")
+print("All 20 years")
 full_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, prices, N)
 full_portfolio.run()
 full_portfolio.to_string()

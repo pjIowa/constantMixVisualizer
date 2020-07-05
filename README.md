@@ -1,14 +1,12 @@
 # Constant Mix Visualizer
 
-This visualizer shows the performance of a constant mix portfolio for 3 stocks over the past 20 years and subset ranges. The strategy approximates equal diversification with daily rebalancing.
+This visualizer shows the performance of a constant mix portfolio for 3 stocks over the past 20 years and subset ranges. The strategy maintains equal weights by wealth with daily rebalancing. The adjusted close price is used for each stock. 
 
 Companies: MSFT, GE, CISCO
 
 Time Range: 6/26/2000 - 6/25/2020 inclusive 
 
-# Assumptions
-
-
+# Assumptionss
 
 Initial Wealth: $1M
 
