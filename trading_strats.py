@@ -5,6 +5,8 @@ import numpy as np
 class portfolio:
 	def __init__(self, initW, num_stocks, cost_per_unit, prices, num_points):
 		self.W = []
+		self.purchases = []
+		self.sales = []
 		self.ttc = 0.
 		self.peak = 0.
 		self.md = 0.
@@ -26,7 +28,12 @@ class portfolio:
 			else:
 				w_n_prev =  np.sum(theta_n_prev*p_n)+mm_balance
 			theta_n = w_n_prev*pi/p_n
-			transact_cost = np.sum(np.abs(theta_n - theta_n_prev))*self.unit_c
+			delta_shares = theta_n - theta_n_prev
+			shares_bought = np.where(delta_shares<0, 0, delta_shares) 
+			shares_sold = np.where(delta_shares>0, 0, delta_shares) 
+			self.purchases.append(np.sum(shares_bought*p_n))
+			self.sales.append(np.sum(-1.*shares_sold*p_n))
+			transact_cost = np.sum(np.abs(delta_shares))*self.unit_c
 			w_n_shares = np.sum(theta_n*p_n)
 			mm_balance = w_n_prev-w_n_shares-transact_cost
 			self.ttc += transact_cost
@@ -56,6 +63,7 @@ class portfolio:
 		return ((daily_mean+1.)**N)-1.
 
 	def to_string(self):
+		#TODO Average annual turnover = lesser of purchases or sales over year / average monthly net assets
 		print(f"Annualized rate of return: {self.get_annualized_return()*100.0:.3f} %")
 		print(f"Expense ratio: {self.ttc/self.W[-1]*100.0:.3f} %")
 		print(f"Max drawdown: {self.md:.3f} %")
