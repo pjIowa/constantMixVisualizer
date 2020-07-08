@@ -65,9 +65,29 @@ class portfolio:
 		N = 252
 		return ((daily_mean+1.)**N)-1.
 
+	# larger of purchases or sales over year / average net assets over year
+	def get_turnover(self):
+		num_year = 252
+		start_ind = range(0, self.N, num_year)
+
+		purchase_chunks = (self.purchases[i:i+num_year] for i in start_ind)
+		purchase_sums = []
+		for chunk in purchase_chunks:
+			purchase_sums.append(np.sum(chunk))
+		sale_chunks = (self.sales[i:i+num_year] for i in start_ind)
+		sale_sums = []
+		for chunk in sale_chunks:
+			sale_sums.append(np.sum(chunk))
+
+		wealth_chunks = (self.W[i:i+num_year] for i in start_ind)
+		wealth_avgs = []
+		for chunk in wealth_chunks:
+			wealth_avgs.append(np.mean(chunk))
+		turnovers = [np.maximum(p,s)/w for p,s,w in zip(purchase_sums,sale_sums,wealth_avgs)]
+		return np.mean(turnovers)
+
 	def to_string(self):
-		# TODO turnover = lesser of purchases or sales over year / average monthly net assets
-		# take average of annual turnovers (252 trading) 
+		print(f"Turnover: {self.get_turnover()*100.0:.3f} %")
 		print(f"Annualized rate of return: {self.get_annualized_return()*100.0:.3f} %")
 		print(f"Expense ratio: {self.ttc/self.W[-1]*100.0:.3f} %")
 		print(f"Max drawdown: {self.md:.3f} %")
@@ -90,65 +110,65 @@ full_portfolio.run()
 full_portfolio.to_string()
 print()
 
-# highest_start_index = 0
-# lowest_start_index = 0
-# volatile_start_index = 0
-# stable_start_index = 0
+highest_start_index = 0
+lowest_start_index = 0
+volatile_start_index = 0
+stable_start_index = 0
 
-# highest_percent_change = 0.
-# lowest__percent_change = 100000.
-# highest_variance = 0.
-# lowest_variance = 100000.
+highest_percent_change = 0.
+lowest__percent_change = 100000.
+highest_variance = 0.
+lowest_variance = 100000.
 
-# trading_days = 252
-# for i in range(0, N-trading_days):
-# 	full_portfolio_start = np.mean(prices[:,i], axis=0)
-# 	full_portfolio_end = np.mean(prices[:,i+trading_days-1], axis=0) 
-# 	full_portfolio_percent_change = (full_portfolio_end - full_portfolio_start)/full_portfolio_start
+trading_days = 252
+for i in range(0, N-trading_days):
+	full_portfolio_start = np.mean(prices[:,i], axis=0)
+	full_portfolio_end = np.mean(prices[:,i+trading_days-1], axis=0) 
+	full_portfolio_percent_change = (full_portfolio_end - full_portfolio_start)/full_portfolio_start
 
-# 	if full_portfolio_percent_change > highest_percent_change:
-# 		highest_start_index = i
-# 		highest_percent_change = full_portfolio_percent_change
-# 	if full_portfolio_percent_change < lowest__percent_change:
-# 		lowest_start_index = i
-# 		lowest__percent_change = full_portfolio_percent_change
+	if full_portfolio_percent_change > highest_percent_change:
+		highest_start_index = i
+		highest_percent_change = full_portfolio_percent_change
+	if full_portfolio_percent_change < lowest__percent_change:
+		lowest_start_index = i
+		lowest__percent_change = full_portfolio_percent_change
 
-# 	returns_cov = np.cov(np.diff(prices[:,i:i+trading_days]))
-# 	full_portfolio_variance = (np.trace(returns_cov)+2.*np.sum(np.triu(returns_cov))+2.*np.sum(np.tril(returns_cov)))/9.
-# 	if full_portfolio_variance > highest_variance:
-# 		highest_variance = full_portfolio_variance
-# 		volatile_start_index = i
-# 	if full_portfolio_variance < lowest_variance:
-# 		lowest_variance = full_portfolio_variance
-# 		stable_start_index = i
+	returns_cov = np.cov(np.diff(prices[:,i:i+trading_days]))
+	full_portfolio_variance = (np.trace(returns_cov)+2.*np.sum(np.triu(returns_cov))+2.*np.sum(np.tril(returns_cov)))/9.
+	if full_portfolio_variance > highest_variance:
+		highest_variance = full_portfolio_variance
+		volatile_start_index = i
+	if full_portfolio_variance < lowest_variance:
+		lowest_variance = full_portfolio_variance
+		stable_start_index = i
 
-# print("Most volatile year")
-# volatile_prices_range = prices[:,volatile_start_index:volatile_start_index+trading_days]
-# volatile_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, volatile_prices_range, trading_days)
-# volatile_portfolio.run()
-# volatile_portfolio.to_string()
-# print()
+print("Most volatile year")
+volatile_prices_range = prices[:,volatile_start_index:volatile_start_index+trading_days]
+volatile_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, volatile_prices_range, trading_days)
+volatile_portfolio.run()
+volatile_portfolio.to_string()
+print()
 
-# print("Least volatile year")
-# stable_prices_range = prices[:,stable_start_index:stable_start_index+trading_days]
-# stable_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, stable_prices_range, trading_days)
-# stable_portfolio.run()
-# stable_portfolio.to_string()
-# print()
+print("Least volatile year")
+stable_prices_range = prices[:,stable_start_index:stable_start_index+trading_days]
+stable_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, stable_prices_range, trading_days)
+stable_portfolio.run()
+stable_portfolio.to_string()
+print()
 
-# print("Best year")
-# highest_prices_range = prices[:,highest_start_index:highest_start_index+trading_days]
-# highest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, highest_prices_range, trading_days)
-# highest_portfolio.run()
-# highest_portfolio.to_string()
-# print()
+print("Best year")
+highest_prices_range = prices[:,highest_start_index:highest_start_index+trading_days]
+highest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, highest_prices_range, trading_days)
+highest_portfolio.run()
+highest_portfolio.to_string()
+print()
 
-# print("Worst year")
-# lowest_prices_range = prices[:,lowest_start_index:lowest_start_index+trading_days]
-# lowest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, lowest_prices_range, trading_days)
-# lowest_portfolio.run()
-# lowest_portfolio.to_string()
-# print()
+print("Worst year")
+lowest_prices_range = prices[:,lowest_start_index:lowest_start_index+trading_days]
+lowest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, lowest_prices_range, trading_days)
+lowest_portfolio.run()
+lowest_portfolio.to_string()
+print()
 
 # plt.plot(full_portfolio.W)
 # plt.xlabel('Days since 6-26-00')
