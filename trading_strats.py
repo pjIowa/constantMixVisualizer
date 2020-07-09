@@ -1,10 +1,11 @@
 import pandas as pd
 import numpy as np
-# from matplotlib import pyplot as plt
+from matplotlib import pyplot as plt
 
 class portfolio:
 	def __init__(self, initW, num_stocks, cost_per_unit, prices, num_points):
 		self.W = []
+		self.cumulative_tc = [0.]
 		self.purchases = []
 		self.sales = []
 		self.ttc = 0.
@@ -40,6 +41,7 @@ class portfolio:
 			w_n_shares = np.sum(theta_n*p_n)
 			mm_balance = w_n_prev-w_n_shares-transact_cost
 			self.ttc += transact_cost
+			self.cumulative_tc.append(self.cumulative_tc[-1]+transact_cost)
 			self.add_wealth(mm_balance+w_n_shares)
 			theta_n_prev = theta_n
 
@@ -170,7 +172,22 @@ lowest_portfolio.run()
 lowest_portfolio.to_string()
 print()
 
-# plt.plot(full_portfolio.W)
-# plt.xlabel('Days since 6-26-00')
-# plt.ylabel('Wealth, $')
-# plt.show()
+# TODO add specific dates
+fig, axs = plt.subplots(2)
+axs[0].plot(np.array(full_portfolio.W)/initial_wealth*100.0)
+axs[1].plot(full_portfolio.cumulative_tc)
+axs[0].set_title('Wealth, % of Initial')
+axs[1].set_title('Transactions, $')
+plt.subplots_adjust(hspace = .4)
+plt.xlabel('Days since 6-26-00')
+plt.show()
+
+# TODO make into portfolio func
+fig, axs = plt.subplots(2)
+axs[0].plot(np.array(volatile_portfolio.W)/initial_wealth*100.0)
+axs[1].plot(volatile_portfolio.cumulative_tc)
+axs[0].set_title('Wealth, % of Initial')
+axs[1].set_title('Transactions, $')
+plt.subplots_adjust(hspace = .4)
+plt.xlabel('Days since start')
+plt.show()
