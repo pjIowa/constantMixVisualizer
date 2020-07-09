@@ -9,10 +9,23 @@ This visualizer shows the performance of a constant mix portfolio for 3 stocks o
 
 Turnover: 85.674 %
 
-Annualized rate of return: 2.242 %
+Annualized mean return: 2.242 %
 
 Expense ratio: 0.497 %
 
 Max drawdown: 54.770 %
 
 Sharpe ratio: 0.191
+
+#### Definitions
+[Turnover](https://www.investopedia.com/terms/a/annual-turnover.asp)
+
+TODO Annualized mean return formula in Latex
+
+TODO Annualized variance formula in Latex
+
+Expense ratio = Cumulative transaction costs / Final wealth
+
+[Drawdown](https://en.wikipedia.org/wiki/Drawdown_(economics))
+
+Sharpe Ratio  = Annualized Mean / sqrt(Annualized Variance)
