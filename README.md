@@ -9,3 +9,14 @@ Initial Wealth: $1M
 Trading cost is $0.005 per share
 
 Money market return is 0%
+
+# Tested Portfolio Ranges
+
+![Full 20](images/full_20.png) 
+
+All 20 years
+Turnover: 85.674 %
+Annualized rate of return: 2.242 %
+Expense ratio: 0.497 %
+Max drawdown: 54.770 %
+Sharpe ratio: 0.191
