@@ -17,6 +17,66 @@ Max drawdown: 54.770 %
 
 Sharpe ratio: 0.191
 
+### Most volatile year
+![Most Volatile](images/most_volatile.png) 
+
+#### Statistics
+
+Turnover: 187.199 %
+
+Annualized rate of return: -0.821 %
+
+Expense ratio: 0.085 %
+
+Max drawdown: 29.340 %
+
+Sharpe ratio: -0.028
+
+### Least volatile year
+![Least Volatile](images/least_volatile.png) 
+
+#### Statistics
+
+Turnover: 122.973 %
+
+Annualized rate of return: 2.659 %
+
+Expense ratio: 0.050 %
+
+Max drawdown: 6.713 %
+
+Sharpe ratio: 0.287
+
+### Best year
+![Best Year](images/best_year.png) 
+
+#### Statistics
+
+Turnover: 129.866 %
+
+Annualized rate of return: 53.207 %
+
+Expense ratio: 0.088 %
+
+Max drawdown: 8.317 %
+
+Sharpe ratio: 2.040
+
+### Worst year
+![Worst Year](images/worst_year.png) 
+
+#### Statistics
+
+Turnover: 284.685 %
+
+Annualized rate of return: -50.142 %
+
+Expense ratio: 0.145 %
+
+Max drawdown: 41.217 %
+
+Sharpe ratio: -1.899
+
 #### Definitions
 [Turnover](https://www.investopedia.com/terms/a/annual-turnover.asp)
 
