@@ -3,19 +3,20 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 class portfolio:
-	def __init__(self, initW, num_stocks, cost_per_unit, prices, num_points):
+	def __init__(self, num_stocks, prices, num_points, dates):
 		self.W = []
-		self.cumulative_tc = [0.]
+		self.cumulative_tc = []
 		self.purchases = []
 		self.sales = []
 		self.ttc = 0.
 		self.peak = 0.
 		self.md = 0.
-		self.initW = initW
+		self.initW = 10**6
 		self.num_s = num_stocks
-		self.unit_c = cost_per_unit
+		self.unit_c = .005
 		self.prices = prices
 		self.N = num_points
+		self.dates = dates
 
 	def run(self):
 		num_assets = self.num_s+1
@@ -41,7 +42,10 @@ class portfolio:
 			w_n_shares = np.sum(theta_n*p_n)
 			mm_balance = w_n_prev-w_n_shares-transact_cost
 			self.ttc += transact_cost
-			self.cumulative_tc.append(self.cumulative_tc[-1]+transact_cost)
+			if len(self.cumulative_tc) == 0:
+				self.cumulative_tc.append(transact_cost)
+			else:
+				self.cumulative_tc.append(self.cumulative_tc[-1]+transact_cost)
 			self.add_wealth(mm_balance+w_n_shares)
 			theta_n_prev = theta_n
 
@@ -67,7 +71,6 @@ class portfolio:
 		N = 252
 		return ((daily_mean+1.)**N)-1.
 
-	# larger of purchases or sales over year / average net assets over year
 	def get_turnover(self):
 		num_year = 252
 		start_ind = range(0, self.N, num_year)
@@ -85,15 +88,27 @@ class portfolio:
 		wealth_avgs = []
 		for chunk in wealth_chunks:
 			wealth_avgs.append(np.mean(chunk))
+
+		# larger of purchases or sales over year / average net assets over year
+		# averaged over trading years
 		turnovers = [np.maximum(p,s)/w for p,s,w in zip(purchase_sums,sale_sums,wealth_avgs)]
 		return np.mean(turnovers)
 
-	def to_string(self):
+	def print_stats(self):
 		print(f"Turnover: {self.get_turnover()*100.0:.3f} %")
 		print(f"Annualized rate of return: {self.get_annualized_return()*100.0:.3f} %")
 		print(f"Expense ratio: {self.ttc/self.W[-1]*100.0:.3f} %")
 		print(f"Max drawdown: {self.md:.3f} %")
 		print(f"Sharpe ratio: {self.get_sharpe_ratio():.3f}")
+
+	def plot(self):
+		fig, axs = plt.subplots(2)
+		axs[0].plot(self.dates, np.array(self.W)/self.initW*100.0)
+		axs[1].plot(self.dates, np.array(self.cumulative_tc))
+		axs[0].set_title('Wealth, % of Initial')
+		axs[1].set_title('Transactions, $')
+		plt.subplots_adjust(hspace = .4)
+		plt.show()
 
 # Adjusted close downloaded from June 25, 2000 to June 26, 2020 inclusive of 3 stocks using data from Yahoo Finance
 MSFT=pd.read_csv('MSFT.csv')["Adj Close"].to_numpy()
@@ -101,15 +116,15 @@ CSCO=pd.read_csv('CSCO.csv')["Adj Close"].to_numpy()
 GE=pd.read_csv('GE.csv')["Adj Close"].to_numpy()
 prices = np.vstack((MSFT, CSCO, GE))
 
+t_dates = pd.to_datetime(pd.read_csv('GE.csv')["Date"]).to_numpy()
+
 N = len(prices[0])
-initial_wealth = 10**6
-cost_per_unit = 0.005
 num_stocks = len(prices)
 
 print("All 20 years")
-full_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, prices, N)
+full_portfolio = portfolio(num_stocks, prices, N, t_dates)
 full_portfolio.run()
-full_portfolio.to_string()
+full_portfolio.print_stats()
 print()
 
 highest_start_index = 0
@@ -145,49 +160,42 @@ for i in range(0, N-trading_days):
 		stable_start_index = i
 
 print("Most volatile year")
-volatile_prices_range = prices[:,volatile_start_index:volatile_start_index+trading_days]
-volatile_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, volatile_prices_range, trading_days)
+v_range = range(volatile_start_index,volatile_start_index+trading_days)
+volatile_prices = prices[:,v_range]
+volatile_dates = t_dates[v_range]
+volatile_portfolio = portfolio(num_stocks, volatile_prices, trading_days, volatile_dates)
 volatile_portfolio.run()
-volatile_portfolio.to_string()
+volatile_portfolio.print_stats()
 print()
 
 print("Least volatile year")
-stable_prices_range = prices[:,stable_start_index:stable_start_index+trading_days]
-stable_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, stable_prices_range, trading_days)
+s_range = range(stable_start_index,stable_start_index+trading_days)
+stable_prices = prices[:,s_range]
+stable_dates = t_dates[s_range]
+stable_portfolio = portfolio(num_stocks, stable_prices, trading_days, stable_dates)
 stable_portfolio.run()
-stable_portfolio.to_string()
+stable_portfolio.print_stats()
 print()
 
 print("Best year")
-highest_prices_range = prices[:,highest_start_index:highest_start_index+trading_days]
-highest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, highest_prices_range, trading_days)
+h_range = range(highest_start_index,highest_start_index+trading_days)
+highest_prices = prices[:,h_range]
+highest_dates = t_dates[h_range]
+highest_portfolio = portfolio(num_stocks, highest_prices, trading_days, highest_dates)
 highest_portfolio.run()
-highest_portfolio.to_string()
+highest_portfolio.print_stats()
 print()
 
 print("Worst year")
-lowest_prices_range = prices[:,lowest_start_index:lowest_start_index+trading_days]
-lowest_portfolio = portfolio(initial_wealth, num_stocks, cost_per_unit, lowest_prices_range, trading_days)
+l_range = range(lowest_start_index,lowest_start_index+trading_days)
+lowest_prices = prices[:,l_range]
+lowest_dates = t_dates[l_range]
+lowest_portfolio = portfolio(num_stocks, lowest_prices, trading_days, lowest_dates)
 lowest_portfolio.run()
-lowest_portfolio.to_string()
-print()
+lowest_portfolio.print_stats()
 
-# TODO add specific dates
-fig, axs = plt.subplots(2)
-axs[0].plot(np.array(full_portfolio.W)/initial_wealth*100.0)
-axs[1].plot(full_portfolio.cumulative_tc)
-axs[0].set_title('Wealth, % of Initial')
-axs[1].set_title('Transactions, $')
-plt.subplots_adjust(hspace = .4)
-plt.xlabel('Days since 6-26-00')
-plt.show()
-
-# TODO make into portfolio func
-fig, axs = plt.subplots(2)
-axs[0].plot(np.array(volatile_portfolio.W)/initial_wealth*100.0)
-axs[1].plot(volatile_portfolio.cumulative_tc)
-axs[0].set_title('Wealth, % of Initial')
-axs[1].set_title('Transactions, $')
-plt.subplots_adjust(hspace = .4)
-plt.xlabel('Days since start')
-plt.show()
+full_portfolio.plot()
+volatile_portfolio.plot()
+stable_portfolio.plot()
+highest_portfolio.plot()
+lowest_portfolio.plot()
