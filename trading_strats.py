@@ -2,8 +2,8 @@ import pandas as pd
 import numpy as np
 from matplotlib import pyplot as plt
 
-class portfolio:
-	def __init__(self, num_stocks, prices, num_points, dates):
+class Portfolio:
+	def __init__(self, prices, dates):
 		self.W = []
 		self.cumulative_tc = []
 		self.purchases = []
@@ -12,16 +12,15 @@ class portfolio:
 		self.peak = 0.
 		self.md = 0.
 		self.initW = 10**6
-		self.num_s = num_stocks
 		self.unit_c = .005
 		self.prices = prices
-		self.N = num_points
+		self.N = len(dates)
 		self.dates = dates
 
 	def run(self):
-		num_assets = self.num_s+1
-		pi = np.full(self.num_s, 1./num_assets)
-		theta_n_prev = np.zeros(self.num_s)
+		num_assets = Portfolio.num_s+1
+		pi = np.full(Portfolio.num_s, 1./num_assets)
+		theta_n_prev = np.zeros(Portfolio.num_s)
 		# TODO add money market interest 
 		# use same-day 3mo treasury rate to approximate
 		# r_daily = (1.+r/100.0)**1/360 -1.
@@ -119,10 +118,11 @@ prices = np.vstack((MSFT, CSCO, GE))
 t_dates = pd.to_datetime(pd.read_csv('GE.csv')["Date"]).to_numpy()
 
 N = len(prices[0])
-num_stocks = len(prices)
+# num_stocks = len(prices)
+Portfolio.num_s = len(prices)
 
 print("All 20 years")
-full_portfolio = portfolio(num_stocks, prices, N, t_dates)
+full_portfolio = Portfolio(prices, t_dates)
 full_portfolio.run()
 full_portfolio.print_stats()
 print()
@@ -163,7 +163,7 @@ print("Most volatile year")
 v_range = range(volatile_start_index,volatile_start_index+trading_days)
 volatile_prices = prices[:,v_range]
 volatile_dates = t_dates[v_range]
-volatile_portfolio = portfolio(num_stocks, volatile_prices, trading_days, volatile_dates)
+volatile_portfolio = Portfolio(volatile_prices, volatile_dates)
 volatile_portfolio.run()
 volatile_portfolio.print_stats()
 print()
@@ -172,7 +172,7 @@ print("Least volatile year")
 s_range = range(stable_start_index,stable_start_index+trading_days)
 stable_prices = prices[:,s_range]
 stable_dates = t_dates[s_range]
-stable_portfolio = portfolio(num_stocks, stable_prices, trading_days, stable_dates)
+stable_portfolio = Portfolio(stable_prices, stable_dates)
 stable_portfolio.run()
 stable_portfolio.print_stats()
 print()
@@ -181,7 +181,7 @@ print("Best year")
 h_range = range(highest_start_index,highest_start_index+trading_days)
 highest_prices = prices[:,h_range]
 highest_dates = t_dates[h_range]
-highest_portfolio = portfolio(num_stocks, highest_prices, trading_days, highest_dates)
+highest_portfolio = Portfolio(highest_prices, highest_dates)
 highest_portfolio.run()
 highest_portfolio.print_stats()
 print()
@@ -190,7 +190,7 @@ print("Worst year")
 l_range = range(lowest_start_index,lowest_start_index+trading_days)
 lowest_prices = prices[:,l_range]
 lowest_dates = t_dates[l_range]
-lowest_portfolio = portfolio(num_stocks, lowest_prices, trading_days, lowest_dates)
+lowest_portfolio = Portfolio(lowest_prices, lowest_dates)
 lowest_portfolio.run()
 lowest_portfolio.print_stats()
 
