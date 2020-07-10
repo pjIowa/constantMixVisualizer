@@ -59,31 +59,30 @@ class Portfolio:
 	def get_sharpe_ratio(self):
 		daily_return = np.diff(self.W)/self.W[-1]
 		daily_mean = np.mean(daily_return)
-		N = 252
-		annual_mean = ((daily_mean+1.)**N)-1.
-		annnual_variance = ((np.var(daily_return)+(daily_mean+1.)**2)**N)-((daily_mean+1.)**(2*N))
+		annual_mean = ((daily_mean+1.)**Portfolio.tN)-1.
+		annnual_variance = ((np.var(daily_return)
+			+(daily_mean+1.)**2)**Portfolio.tN)
+		-((daily_mean+1.)**(2*Portfolio.tN))
 		return annual_mean/np.sqrt(annnual_variance)
 
 	def get_annualized_return(self):
 		daily_return = np.diff(self.W)/self.W[-1]
 		daily_mean = np.mean(daily_return)
-		N = 252
-		return ((daily_mean+1.)**N)-1.
+		return ((daily_mean+1.)**Portfolio.tN)-1.
 
 	def get_turnover(self):
-		num_year = 252
-		start_ind = range(0, self.N, num_year)
+		start_ind = range(0, self.N, Portfolio.tN)
 
-		purchase_chunks = (self.purchases[i:i+num_year] for i in start_ind)
+		purchase_chunks = (self.purchases[i:i+Portfolio.tN] for i in start_ind)
 		purchase_sums = []
 		for chunk in purchase_chunks:
 			purchase_sums.append(np.sum(chunk))
-		sale_chunks = (self.sales[i:i+num_year] for i in start_ind)
+		sale_chunks = (self.sales[i:i+Portfolio.tN] for i in start_ind)
 		sale_sums = []
 		for chunk in sale_chunks:
 			sale_sums.append(np.sum(chunk))
 
-		wealth_chunks = (self.W[i:i+num_year] for i in start_ind)
+		wealth_chunks = (self.W[i:i+Portfolio.tN] for i in start_ind)
 		wealth_avgs = []
 		for chunk in wealth_chunks:
 			wealth_avgs.append(np.mean(chunk))
@@ -120,6 +119,8 @@ t_dates = pd.to_datetime(pd.read_csv('GE.csv')["Date"]).to_numpy()
 N = len(prices[0])
 # num_stocks = len(prices)
 Portfolio.num_s = len(prices)
+trading_days_in_year = 252
+Portfolio.tN = trading_days_in_year
 
 print("All 20 years")
 full_portfolio = Portfolio(prices, t_dates)
@@ -137,10 +138,9 @@ lowest__percent_change = 100000.
 highest_variance = 0.
 lowest_variance = 100000.
 
-trading_days = 252
-for i in range(0, N-trading_days):
+for i in range(0, N-trading_days_in_year):
 	full_portfolio_start = np.mean(prices[:,i], axis=0)
-	full_portfolio_end = np.mean(prices[:,i+trading_days-1], axis=0) 
+	full_portfolio_end = np.mean(prices[:,i+trading_days_in_year-1], axis=0) 
 	full_portfolio_percent_change = (full_portfolio_end - full_portfolio_start)/full_portfolio_start
 
 	if full_portfolio_percent_change > highest_percent_change:
@@ -150,7 +150,7 @@ for i in range(0, N-trading_days):
 		lowest_start_index = i
 		lowest__percent_change = full_portfolio_percent_change
 
-	returns_cov = np.cov(np.diff(prices[:,i:i+trading_days]))
+	returns_cov = np.cov(np.diff(prices[:,i:i+trading_days_in_year]))
 	full_portfolio_variance = (np.trace(returns_cov)+2.*np.sum(np.triu(returns_cov))+2.*np.sum(np.tril(returns_cov)))/9.
 	if full_portfolio_variance > highest_variance:
 		highest_variance = full_portfolio_variance
@@ -160,7 +160,7 @@ for i in range(0, N-trading_days):
 		stable_start_index = i
 
 print("Most volatile year")
-v_range = range(volatile_start_index,volatile_start_index+trading_days)
+v_range = range(volatile_start_index,volatile_start_index+trading_days_in_year)
 volatile_prices = prices[:,v_range]
 volatile_dates = t_dates[v_range]
 volatile_portfolio = Portfolio(volatile_prices, volatile_dates)
@@ -169,7 +169,7 @@ volatile_portfolio.print_stats()
 print()
 
 print("Least volatile year")
-s_range = range(stable_start_index,stable_start_index+trading_days)
+s_range = range(stable_start_index,stable_start_index+trading_days_in_year)
 stable_prices = prices[:,s_range]
 stable_dates = t_dates[s_range]
 stable_portfolio = Portfolio(stable_prices, stable_dates)
@@ -178,7 +178,7 @@ stable_portfolio.print_stats()
 print()
 
 print("Best year")
-h_range = range(highest_start_index,highest_start_index+trading_days)
+h_range = range(highest_start_index,highest_start_index+trading_days_in_year)
 highest_prices = prices[:,h_range]
 highest_dates = t_dates[h_range]
 highest_portfolio = Portfolio(highest_prices, highest_dates)
@@ -187,7 +187,7 @@ highest_portfolio.print_stats()
 print()
 
 print("Worst year")
-l_range = range(lowest_start_index,lowest_start_index+trading_days)
+l_range = range(lowest_start_index,lowest_start_index+trading_days_in_year)
 lowest_prices = prices[:,l_range]
 lowest_dates = t_dates[l_range]
 lowest_portfolio = Portfolio(lowest_prices, lowest_dates)
