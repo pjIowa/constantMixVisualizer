@@ -117,7 +117,6 @@ prices = np.vstack((MSFT, CSCO, GE))
 t_dates = pd.to_datetime(pd.read_csv('GE.csv')["Date"]).to_numpy()
 
 N = len(prices[0])
-# num_stocks = len(prices)
 Portfolio.num_s = len(prices)
 trading_days_in_year = 252
 Portfolio.tN = trading_days_in_year
