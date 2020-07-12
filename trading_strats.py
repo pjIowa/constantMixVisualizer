@@ -23,7 +23,8 @@ class Portfolio:
 		theta_n_prev = np.zeros(Portfolio.num_s)
 		# TODO add money market interest 
 		# use same-day 3mo treasury rate to approximate
-		# r_daily = (1.+r/100.0)**1/360 -1.
+		# traded on all days, except holdiays
+		# r_daily = (1.+r/100.0)**1/360? -1.
 		mm_balance = self.initW
 		for i in range(self.N):
 			p_n = self.prices[:,i]
@@ -113,8 +114,9 @@ MSFT=pd.read_csv('MSFT.csv')["Adj Close"].to_numpy()
 CSCO=pd.read_csv('CSCO.csv')["Adj Close"].to_numpy()
 GE=pd.read_csv('GE.csv')["Adj Close"].to_numpy()
 prices = np.vstack((MSFT, CSCO, GE))
-
 t_dates = pd.to_datetime(pd.read_csv('GE.csv')["Date"]).to_numpy()
+3mo_rates=pd.read_csv('DGS3MO.csv')['Rate']
+
 
 N = len(prices[0])
 Portfolio.num_s = len(prices)
