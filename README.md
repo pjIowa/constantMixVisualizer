@@ -80,7 +80,7 @@ Sharpe ratio: -0.912
 #### Definitions
 [Turnover](https://www.investopedia.com/terms/a/annual-turnover.asp)
 
-TODO Annualized mean return formula in Latex
+![Annualized Return](images/annualized_return.png) 
 
 TODO Annualized variance formula in Latex
 
