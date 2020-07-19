@@ -7,75 +7,75 @@ This visualizer shows the performance of a constant mix portfolio for 3 stocks o
 
 #### Statistics
 
-Turnover: 85.674 %
+Turnover: 85.681 %
 
-Annualized mean return: 2.242 %
+Annualized rate of return: 2.454 %
 
-Expense ratio: 0.497 %
+Expense ratio: 0.485 %
 
-Max drawdown: 54.770 %
+Max drawdown: 54.543 %
 
-Sharpe ratio: 0.191
+Sharpe ratio: 0.013
 
 ### Most volatile year
 ![Most Volatile](images/most_volatile.png) 
 
 #### Statistics
 
-Turnover: 187.199 %
+Turnover: 187.194 %
 
-Annualized rate of return: -0.821 %
+Annualized rate of return: -0.499 %
 
 Expense ratio: 0.085 %
 
-Max drawdown: 29.340 %
+Max drawdown: 29.321 %
 
-Sharpe ratio: -0.028
+Sharpe ratio: -0.013
 
 ### Least volatile year
 ![Least Volatile](images/least_volatile.png) 
 
 #### Statistics
 
-Turnover: 122.973 %
+Turnover: 123.022 %
 
-Annualized rate of return: 2.659 %
+Annualized rate of return: 3.482 %
 
-Expense ratio: 0.050 %
+Expense ratio: 0.049 %
 
-Max drawdown: 6.713 %
+Max drawdown: 6.430 %
 
-Sharpe ratio: 0.287
+Sharpe ratio: 0.011
 
 ### Best year
 ![Best Year](images/best_year.png) 
 
 #### Statistics
 
-Turnover: 129.866 %
+Turnover: 129.865 %
 
-Annualized rate of return: 53.207 %
+Annualized rate of return: 53.235 %
 
 Expense ratio: 0.088 %
 
-Max drawdown: 8.317 %
+Max drawdown: 8.314 %
 
-Sharpe ratio: 2.040
+Sharpe ratio: 0.342
 
 ### Worst year
 ![Worst Year](images/worst_year.png) 
 
 #### Statistics
 
-Turnover: 284.685 %
+Turnover: 284.480 %
 
-Annualized rate of return: -50.142 %
+Annualized rate of return: -49.140 %
 
-Expense ratio: 0.145 %
+Expense ratio: 0.144 %
 
-Max drawdown: 41.217 %
+Max drawdown: 40.651 %
 
-Sharpe ratio: -1.899
+Sharpe ratio: -0.912
 
 #### Definitions
 [Turnover](https://www.investopedia.com/terms/a/annual-turnover.asp)
