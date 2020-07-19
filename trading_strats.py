@@ -59,13 +59,16 @@ class Portfolio:
 		self.W.append(new_W)
 
 	def get_sharpe_ratio(self):
-		daily_return = np.diff(self.W)/self.W[-1]
-		daily_mean = np.mean(daily_return)
-		annual_mean = ((daily_mean+1.)**Portfolio.tN)-1.
-		annnual_variance = ((np.var(daily_return)
-			+(daily_mean+1.)**2)**Portfolio.tN)
-		-((daily_mean+1.)**(2*Portfolio.tN))
-		return annual_mean/np.sqrt(annnual_variance)
+		daily_return_w = np.diff(self.W)/self.W[-1]
+		daily_return_rf = self.mm_rates[:-1]
+		daily_mean_w = np.mean(daily_return_w)
+		daily_mean_rf = np.mean(daily_return_rf)
+		annual_mean_w = ((daily_mean_w+1.)**Portfolio.tN)-1.
+		annual_mean_rf = ((daily_mean_rf+1.)**Portfolio.tN)-1.
+		annnual_variance_w = ((np.var(daily_return_w)
+			+(daily_mean_w+1.)**2)**Portfolio.tN)
+		-((daily_mean_w+1.)**(2*Portfolio.tN))
+		return (annual_mean_w-annual_mean_rf)/np.sqrt(annnual_variance_w)
 
 	def get_annualized_return(self):
 		daily_return = np.diff(self.W)/self.W[-1]
