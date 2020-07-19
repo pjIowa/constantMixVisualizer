@@ -3,7 +3,7 @@ import numpy as np
 from matplotlib import pyplot as plt
 
 class Portfolio:
-	def __init__(self, prices, dates):
+	def __init__(self, prices, mm_rates, dates):
 		self.W = []
 		self.cumulative_tc = []
 		self.purchases = []
@@ -16,21 +16,22 @@ class Portfolio:
 		self.prices = prices
 		self.N = len(dates)
 		self.dates = dates
+		self.mm_rates = mm_rates
 
 	def run(self):
 		num_assets = Portfolio.num_s+1
 		pi = np.full(Portfolio.num_s, 1./num_assets)
 		theta_n_prev = np.zeros(Portfolio.num_s)
-		# TODO add money market interest 
-		# use same-day 3mo treasury rate to approximate
-		# traded on all days, except holdiays
-		# r_daily = (1.+r/100.0)**1/360? -1.
 		mm_balance = self.initW
 		for i in range(self.N):
 			p_n = self.prices[:,i]
 			if i == 0:
 				w_n_prev =  self.initW
 			else:
+				day_gap = (self.dates[i]-self.dates[i-1])/np.timedelta64(1,'D')
+				mm_rate_prev = self.mm_rates[i-int(day_gap)]
+				mm_interest_rate = (1.+mm_rate_prev)**day_gap
+				mm_balance = mm_balance*mm_interest_rate
 				w_n_prev =  np.sum(theta_n_prev*p_n)+mm_balance
 			theta_n = w_n_prev*pi/p_n
 			delta_shares = theta_n - theta_n_prev
@@ -115,8 +116,23 @@ CSCO=pd.read_csv('CSCO.csv')["Adj Close"].to_numpy()
 GE=pd.read_csv('GE.csv')["Adj Close"].to_numpy()
 prices = np.vstack((MSFT, CSCO, GE))
 t_dates = pd.to_datetime(pd.read_csv('GE.csv')["Date"]).to_numpy()
-3mo_rates=pd.read_csv('DGS3MO.csv')['Rate']
 
+# get indices of each trade date from treasury 3mo dates array
+treasury_3mo = pd.read_csv('DGS3MO.csv')
+treasury_3mo_dates = pd.to_datetime(treasury_3mo["DATE"]).to_numpy()
+indices = []
+last_elem = 0.
+for t_date in t_dates:
+	if t_date in treasury_3mo_dates:
+		last_elem = np.where(treasury_3mo_dates==t_date)[0][0]
+	indices.append(last_elem)
+
+# get the 3mo rates for the subset indices
+raw_3mo_rates=pd.to_numeric(treasury_3mo["Rate"]).to_numpy()
+treasury_rates = raw_3mo_rates[np.array(indices)]
+
+# use same-day 3mo treasury rate to approximate daily MM rate
+mm_rates = (1.+treasury_rates/100.0)**(1./360.)-1.
 
 N = len(prices[0])
 Portfolio.num_s = len(prices)
@@ -124,7 +140,7 @@ trading_days_in_year = 252
 Portfolio.tN = trading_days_in_year
 
 print("All 20 years")
-full_portfolio = Portfolio(prices, t_dates)
+full_portfolio = Portfolio(prices, mm_rates, t_dates)
 full_portfolio.run()
 full_portfolio.print_stats()
 print()
@@ -164,7 +180,8 @@ print("Most volatile year")
 v_range = range(volatile_start_index,volatile_start_index+trading_days_in_year)
 volatile_prices = prices[:,v_range]
 volatile_dates = t_dates[v_range]
-volatile_portfolio = Portfolio(volatile_prices, volatile_dates)
+volatile_mm = mm_rates[v_range]
+volatile_portfolio = Portfolio(volatile_prices, volatile_mm, volatile_dates)
 volatile_portfolio.run()
 volatile_portfolio.print_stats()
 print()
@@ -173,7 +190,8 @@ print("Least volatile year")
 s_range = range(stable_start_index,stable_start_index+trading_days_in_year)
 stable_prices = prices[:,s_range]
 stable_dates = t_dates[s_range]
-stable_portfolio = Portfolio(stable_prices, stable_dates)
+stable_mm = mm_rates[s_range]
+stable_portfolio = Portfolio(stable_prices, stable_mm, stable_dates)
 stable_portfolio.run()
 stable_portfolio.print_stats()
 print()
@@ -182,7 +200,8 @@ print("Best year")
 h_range = range(highest_start_index,highest_start_index+trading_days_in_year)
 highest_prices = prices[:,h_range]
 highest_dates = t_dates[h_range]
-highest_portfolio = Portfolio(highest_prices, highest_dates)
+highest_mm = mm_rates[h_range]
+highest_portfolio = Portfolio(highest_prices, highest_mm, highest_dates)
 highest_portfolio.run()
 highest_portfolio.print_stats()
 print()
@@ -191,7 +210,8 @@ print("Worst year")
 l_range = range(lowest_start_index,lowest_start_index+trading_days_in_year)
 lowest_prices = prices[:,l_range]
 lowest_dates = t_dates[l_range]
-lowest_portfolio = Portfolio(lowest_prices, lowest_dates)
+lowest_mm = mm_rates[l_range]
+lowest_portfolio = Portfolio(lowest_prices, lowest_mm, lowest_dates)
 lowest_portfolio.run()
 lowest_portfolio.print_stats()
 
