@@ -82,7 +82,7 @@ Sharpe ratio: -0.912
 
 ![Annualized Return](images/annualized_return.png) 
 
-TODO Annualized variance formula in Latex
+![Annualized Variance](images/annualized_variance.png) 
 
 Expense ratio = Cumulative transaction costs / Final wealth
 
