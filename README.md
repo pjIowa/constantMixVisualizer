@@ -1,81 +1,29 @@
 # Constant Mix Visualizer
 
-This visualizer shows the performance of a constant mix portfolio for 3 stocks over 20 years and subset ranges. The strategy maintains equal wealth for stocks and the money market balance ($1:MSFT, $1:GE, $1:CISCO, $1:MM) and rebalances daily. 
+This visualizer shows the performance of a constant mix portfolio for 3 stocks over 20 years and subset ranges. The strategy maintains equal wealth for stocks and the money market balance ($1:MSFT, $1:GE, $1:CISCO, $1:MM) and rebalances daily. Graphs, statistics, discussion, and definitions below.
 
 ### Full 20 years
 ![Full 20](images/full_20.png) 
 
-#### Statistics
-
-Turnover: 85.681 %
-
-Annualized rate of return: 2.454 %
-
-Expense ratio: 0.485 %
-
-Max drawdown: 54.543 %
-
-Sharpe ratio: 0.013
-
 ### Most volatile year
 ![Most Volatile](images/most_volatile.png) 
-
-#### Statistics
-
-Turnover: 187.194 %
-
-Annualized rate of return: -0.499 %
-
-Expense ratio: 0.085 %
-
-Max drawdown: 29.321 %
-
-Sharpe ratio: -0.013
 
 ### Least volatile year
 ![Least Volatile](images/least_volatile.png) 
 
-#### Statistics
-
-Turnover: 123.022 %
-
-Annualized rate of return: 3.482 %
-
-Expense ratio: 0.049 %
-
-Max drawdown: 6.430 %
-
-Sharpe ratio: 0.011
-
 ### Best year
 ![Best Year](images/best_year.png) 
-
-#### Statistics
-
-Turnover: 129.865 %
-
-Annualized rate of return: 53.235 %
-
-Expense ratio: 0.088 %
-
-Max drawdown: 8.314 %
-
-Sharpe ratio: 0.342
 
 ### Worst year
 ![Worst Year](images/worst_year.png) 
 
-#### Statistics
-
-Turnover: 284.480 %
-
-Annualized rate of return: -49.140 %
-
-Expense ratio: 0.144 %
-
-Max drawdown: 40.651 %
-
-Sharpe ratio: -0.912
+|  | All 20 years| Most volatile year| Least volatile year | Best year | Worst year |
+| :---------------- | :---------- | :------- | :-------- | :------- | :------- |
+| Turnover | 85.681 % | 187.194 % | 123.022 % | 129.865 % | 284.480 % |
+| Annualized return | 2.454 % | -0.499 % | 3.482 % | 53.235 % | -49.140 % |
+| Expense ratio | 0.485 % | 0.085 % | 0.049 % | 0.088 % | 0.144 % | 
+| Max drawdown | 54.543 % | 29.321 % | 6.430 % | 8.314 % | 40.651 % |
+| Sharpe ratio | 0.013 | -0.013 | 0.011 | 0.342 | -0.912 |
 
 ### Discussion
 
