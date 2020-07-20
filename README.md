@@ -50,6 +50,6 @@ Expense ratio = Cumulative transaction costs / Final wealth
 
 [Drawdown](https://en.wikipedia.org/wiki/Drawdown_(economics))
 
-Sharpe Ratio  = Annualized Return / sqrt(Annualized Variance)
+Sharpe Ratio, ![Sharpe Ratio](images/sharpe_ratio.png) 
 
 Formula Image Generator: https://www.codecogs.com/latex/eqneditor.php
