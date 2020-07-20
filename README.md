@@ -80,14 +80,14 @@ Sharpe ratio: -0.912
 #### Definitions
 [Turnover](https://www.investopedia.com/terms/a/annual-turnover.asp)
 
-Annualized Return: ![Annualized Return](images/annualized_return.png) 
+Annualized Return, ![Annualized Return](images/annualized_return.png) 
 
-Annualized Variance: ![Annualized Variance](images/annualized_variance.png) 
+Annualized Variance, ![Annualized Variance](images/annualized_variance.png) 
 
 Expense ratio = Cumulative transaction costs / Final wealth
 
 [Drawdown](https://en.wikipedia.org/wiki/Drawdown_(economics))
 
-Sharpe Ratio  = Annualized Mean / sqrt(Annualized Variance)
+Sharpe Ratio  = Annualized Return / sqrt(Annualized Variance)
 
 Formula Image Generator: https://www.codecogs.com/latex/eqneditor.php
