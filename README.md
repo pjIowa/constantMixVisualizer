@@ -39,6 +39,17 @@ Max drawdown: During the full 20 years, the 3 stocks faced higher drawdown at so
 
 Sharpe ratio: The Sharpe ratios for year-long subsets are not representative of any strategy, so these should be disregarded. For a 20 year term, the Sharpe ratio can be interpreted meaningfully. The Sharpe ratio of .013 is considered a poor investment, and marginally better than just relying on the money market. Again, I selected 3 companies that would remain high on the list over the past 20 years, which boosted portfolio return. Beyond that, a constant mix portfolio weighted by price creates higher turnover than a portfolio weighted by market cap. And daily rebalancing generates higher turnover than less frequent rebalancing. Turnover causes transaction costs and decreases return. 
 
+#### Rebalancing formulas
+![time_n_w](images/time_n.png) 
+
+![time_n+1_pre_w](images/time_n+1_pre_w.png) 
+
+![time_n+1_theta](images/time_n+1_theta.png) 
+
+![time_n+1_post_mm](images/time_n+1_post_mm.png) 
+
+![time_n+1_post_w](images/time_n+1_post_w.png) 
+
 #### Definitions
 [Turnover](https://www.investopedia.com/terms/a/annual-turnover.asp)
 
