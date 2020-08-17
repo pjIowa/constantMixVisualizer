@@ -1,6 +1,6 @@
 # Constant Mix Visualizer
 
-This visualizer shows the performance of a constant mix portfolio for 3 stocks over 20 years and subset ranges. The strategy maintains equal wealth for stocks and the money market balance ($1:MSFT, $1:GE, $1:CISCO, $1:MM) and rebalances daily. Graphs, stats, discussion, and definitions below.
+This visualizer shows the performance of a constant mix portfolio for 3 stocks over 20 years and subset ranges. The strategy maintains equal wealth for stocks and the money market balance ($1:MSFT, $1:GE, $1:CISCO, $1:MM) and rebalances daily. Graphs, stats, discussion, and definitions below. I was inspired by Asset Allocation and Portfolio Management (CFRM 503) at University of Washington Computational Finance Program, taught by Professor Ryan Donnelly. 
 
 ### Full 20 years
 ![Full 20](images/full_20.png) 
